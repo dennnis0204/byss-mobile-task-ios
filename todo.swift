@@ -41,32 +41,31 @@ class TodoViewController {
     }
     
     //funkcja imitujaca przycisniecie przycisku AddNewToDo
-    func imaginaryButtonActionAddNewToDo() throws {
+    func imaginaryButtonActionAddNewToDo() {
       do {
         try todosHandler.addNewTodo(id: self.newIdTodo, title: newTitleTodo, isCompleted: isCheckedTodo)
         self.newIdTodo += 1
         self.newTitleTodo = ""
         self.isCheckedTodo = false
-      } catch TodoError.emptyTitle {
+      } catch {
         print("title is empty \n\n")
       }
-        
     }
     
     //funkcja imitujaca przycisniecie przycisku RemoveTodo dla obiektu z id
-    func imaginaryButtonActionRemoveTodo(id: Int) throws {
+    func imaginaryButtonActionRemoveTodo(id: Int) {
       do {
         try todosHandler.deleteTodo(id: id)
-      } catch TodoError.todoIdNotExist {
+      } catch {
         print("todo with id \(id) doesn't exist\n\n")
       }
     }
     
     //funkcja imitujaca przelaczenie checkbox dla obiektu z id
-    func imaginaryButtonActionToggleTodo(id: Int) throws {
+    func imaginaryButtonActionToggleTodo(id: Int) {
       do {
         try todosHandler.editTodo(id: id)
-      } catch TodoError.todoIdNotExist {
+      } catch {
         print("todo with id \(id) doesn't exist\n\n")
       }
     }
@@ -115,7 +114,6 @@ class TodosHandler: TodosHandlerProtocol {
       } else {
         completed = 1
       }
-
         print(remoteTodos[index])
         remoteTodos[index].updateValue(completed!, forKey: "completed")
         print(remoteTodos[index])
@@ -149,35 +147,26 @@ enum TodoError: Error {
 var todosHandler = TodosHandler()
 var todoView = TodoViewController(todosHandler: todosHandler)
 
+// add new todo with empty title
 todoView.fillImaginaryTextField(title: "")
 todoView.toggleImaginaryCheckbox()
-do {
-  try todoView.imaginaryButtonActionAddNewToDo()
-} catch TodoError.emptyTitle {
-  print("title is empty")
-}
+todoView.imaginaryButtonActionAddNewToDo()
 
+// add new todo
 todoView.fillImaginaryTextField(title: "another todo")
-do {
-  try todoView.imaginaryButtonActionAddNewToDo()
-} catch TodoError.emptyTitle {
-  print("title is empty")
-}
+todoView.imaginaryButtonActionAddNewToDo()
 
-do {
-  try todoView.imaginaryButtonActionRemoveTodo(id: 71)
-} catch TodoError.todoIdNotExist {
-  print("Id doesn't exist")
-}
+// remove nonexistent todo
+todoView.imaginaryButtonActionRemoveTodo(id: 71)
 
-do {
-  try todoView.imaginaryButtonActionRemoveTodo(id: 7)
-} catch TodoError.todoIdNotExist {
-  print("Id doesn't exist")
-}
+// remove todo
+todoView.imaginaryButtonActionRemoveTodo(id: 7)
 
-do {
-  try todoView.imaginaryButtonActionToggleTodo(id: 2)
-} catch TodoError.todoIdNotExist {
-  print("Id doesn't exist")
-}
+// edit todo
+todoView.imaginaryButtonActionToggleTodo(id: 2)
+
+// edit nonexistent todo
+todoView.imaginaryButtonActionRemoveTodo(id: 88)
+
+// print all todos
+todoView.printAllTodos()
